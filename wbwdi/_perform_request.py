@@ -58,29 +58,29 @@ def perform_request(
 
     url = create_request_url(base_url, resource, language, per_page, date, source)
 
-    client = httpx.Client()
-    response = client.get(url)
-    if is_request_error(response):
-        handle_request_error(response)
-        return None
+    with httpx.Client() as client:
+        response = client.get(url)
+        if is_request_error(response):
+            handle_request_error(response)
+            return None
 
-    body = response.json()
-    pages = int(body[0]["pages"])
-    
-    if pages == 1:
-        return body[1]
-    else:
-        results = []
-        for page in range(1, pages + 1):
-            paginated_url = f"{url}&page={page}"
-            page_response = client.get(paginated_url)
-            if progress:
-                print_progress(page, pages)
-            if is_request_error(page_response):
-                handle_request_error(page_response)
-                return None
-            results.extend(page_response.json()[1])
-        return results
+        body = response.json()
+        pages = int(body[0]["pages"])
+        
+        if pages == 1:
+            return body[1]
+        else:
+            results = []
+            for page in range(1, pages + 1):
+                paginated_url = f"{url}&page={page}"
+                page_response = client.get(paginated_url)
+                if progress:
+                    print_progress(page, pages)
+                if is_request_error(page_response):
+                    handle_request_error(page_response)
+                    return None
+                results.extend(page_response.json()[1])
+            return results
 
 def validate_per_page(per_page: int):
     if not isinstance(per_page, int) or not (1 <= per_page <= 32500):
