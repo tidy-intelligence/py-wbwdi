@@ -1,5 +1,5 @@
 import polars as pl
-from wbwdi._perform_request import perform_request
+from .perform_request import perform_request
 
 def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
     """
@@ -15,10 +15,8 @@ def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
     pl.DataFrame
         A DataFrame containing income level data with renamed columns and whitespace trimmed.
     """
-    # Perform the API request to get raw income level data
     income_levels_raw = perform_request("incomeLevels", language=language)
 
-    # Convert raw data to a Polars DataFrame and process it
     income_levels_processed = (pl.DataFrame(income_levels_raw)
         .rename({
             "id": "income_level_id",
