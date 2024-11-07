@@ -119,7 +119,8 @@ def check_for_body_error(response: httpx.Response) -> List[str]:
 
 def handle_request_error(response: httpx.Response):
     error_body = check_for_body_error(response)
-    print("\n".join(error_body), file=sys.stderr)
+    raise RuntimeError("\n".join(error_body))
 
 def print_progress(current: int, total: int):
     print(f"Progress: {current}/{total}", end='\r')
+    
