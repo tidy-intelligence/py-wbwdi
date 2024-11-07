@@ -35,6 +35,7 @@ def wdi_get_regions(language: str = "en") -> pl.DataFrame:
 
     Examples:
     --------
+    >>> # Download all regions in English
     >>> wdi_get_regions()
     """
     regions_raw = perform_request("region", language=language)

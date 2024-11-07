@@ -35,6 +35,7 @@ def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
     
     Examples:
     -------
+    >>> # Download all income levels in English
     >>> wdi_get_income_levels()
     """
     income_levels_raw = perform_request("incomeLevels", language=language)
