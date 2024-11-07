@@ -1,5 +1,5 @@
 import polars as pl
-from wbwdi.perform_request import perform_request
+from .perform_request import perform_request
 
 def wdi_get_regions(language: str = "en") -> pl.DataFrame:
     """

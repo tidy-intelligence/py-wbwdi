@@ -1,5 +1,5 @@
 import polars as pl
-from wbwdi.perform_request import perform_request
+from .perform_request import perform_request
 
 def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
     """
