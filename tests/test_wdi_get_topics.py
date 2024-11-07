@@ -1,16 +1,16 @@
 import pytest
-from wbwdi import wdi_get_sources
+from wbwdi import wdi_get_topics
 
 def test_wdi_get_sources_columns():
-    result = wdi_get_sources(language="en")
+    result = wdi_get_topics(language="en")
     
-    expected_columns = {"source_id", "source_code", "source_name", "update_date", "is_data_available", "is_metadata_available", "concepts"}
+    expected_columns = {"topic_id", "topic_name", "topic_note"}
 
     assert set(result.columns) == expected_columns, "DataFrame columns do not match the expected structure"
 
-def test_wdi_get_sources_invalid_language():
+def test_wdi_get_topics_invalid_language():
     with pytest.raises(Exception) as excinfo:
-        wdi_get_sources(language="xx")
+        wdi_get_topics(language="xx")
     
     expected_error_message = (
         "Error code: 150\nResponse requested in an unsupported language.\n"

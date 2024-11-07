@@ -16,7 +16,7 @@ def wdi_get_regions(language: str = "en") -> pl.DataFrame:
 
     Returns:
     -------
-    DataFrame
+    pl.DataFrame
         A DataFrame with the following columns:
         - `region_id`: An integer for the identifier for each region.
         - `region_code`: A character string representing the region code.

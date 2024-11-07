@@ -16,10 +16,10 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
 
     Returns:
     -------
-    DataFrame
-        A DataFrame with six columns:
+    pl.DataFrame
+        A DataFrame with the following columns:
         - `source_id`: An integer identifier for the data source.
-        - `source_iso2code`: A character string for the ISO2 source code.
+        - `source_code`: A character string for the source code.
         - `source_name`: The name of the data source (e.g., "World Development Indicators").
         - `update_date`: The last update date of the data source.
         - `is_data_available`: A boolean indicating whether data is available.
@@ -46,7 +46,7 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
     sources_processed = (pl.DataFrame(sources_raw)
         .rename({
             "id": "source_id",
-            "code": "source_iso2code",
+            "code": "source_code",
             "name": "source_name",
             "lastupdated": "update_date",
             "dataavailability": "is_data_available",
@@ -55,13 +55,14 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
         })
         .with_columns(
             source_id = pl.col("source_id").cast(pl.Int64),
+            source_name = pl.col("source_name").str.strip_chars_end(),
             update_date = pl.col("update_date").str.to_date(),
             is_data_available = pl.col("is_data_available") == "Y",
             is_metadata_available = pl.col("is_metadata_available") == "Y",
             concepts = pl.col("concepts").cast(pl.Int64)
         )
         .select(
-            pl.col("source_id"), pl.col("source_iso2code"), pl.col("source_name"),
+            pl.col("source_id"), pl.col("source_code"), pl.col("source_name"),
             pl.col("update_date"), pl.col("is_data_available"), pl.col("is_metadata_available"),
             pl.col("concepts")
         )
