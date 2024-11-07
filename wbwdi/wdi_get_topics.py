@@ -16,9 +16,9 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
     -------
     pl.DataFrame
         A DataFrame with the following columns:
-        - topic_id: The unique identifier for the topic.
-        - topic_name: The name of the topic (e.g., "Education", "Health").
-        - topic_note: A brief description or note about the topic.
+        - `topic_id`: The unique identifier for the topic.
+        - `topic_name`: The name of the topic (e.g., "Education", "Health").
+        - `topic_note`: A brief description or note about the topic.
 
     Details:
     This function provides a reference for the supported topics that can be used 

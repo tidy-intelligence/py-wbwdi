@@ -90,7 +90,10 @@ def create_request_url(
     base_url: str, resource: str, language: Optional[str],
     per_page: int, date: Optional[str], source: Optional[str]
 ) -> str:
-    url = f"{base_url}{language}/{resource}?format=json&per_page={str(per_page)}"
+    if language:
+        url = f"{base_url}{language}/{resource}?format=json&per_page={str(per_page)}"
+    else:
+        url = f"{base_url}{resource}?format=json&per_page={str(per_page)}"
     if date:
         url += f"&date={str(date)}"
     if source:
