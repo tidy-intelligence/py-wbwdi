@@ -1,7 +1,7 @@
 import polars as pl
 from .perform_request import perform_request
 
-def wdi_get_languages():
+def wdi_get_languages() -> pl.DataFrame:
     """
     Download languages from the World Bank API.
 

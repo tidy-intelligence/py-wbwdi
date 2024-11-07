@@ -52,7 +52,7 @@ def wdi_get_regions(language: str = "en") -> pl.DataFrame:
             region_id = pl.when(pl.col("region_id") == "").then(None)
                         .otherwise(pl.col("region_id"))
                         .cast(pl.Int64),
-            region_name = pl.col("region_name").str.strip_chars_end()
+            region_name = pl.col("region_name").str.strip_chars()
         )
     )
 
