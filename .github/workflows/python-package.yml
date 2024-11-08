@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
 
-    name: ${{ matrix.os }} (${{ matrix.python-version }})
+    name: ${{ matrix.os }} (Python ${{ matrix.python-version }})
 
     strategy:
       matrix:
@@ -29,20 +29,12 @@ jobs:
         python-version: ${{ matrix.python-version}}
 
     - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-      env:
-        POETRY_HOME: $HOME/.poetry
+      uses: snok/install-poetry@v1
 
-    - name: Add Poetry to PATH
-      run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-
-    - name: Install dependencies
-      run: |
-        poetry install --no-root 
-      env:
-        POETRY_VIRTUALENVS_IN_PROJECT: false
+    - name: Install project
+      run: poetry install --no-interaction
 
     - name: Run tests
       run: |
-        poetry run pytest 
+          source .venv/bin/activate
+          pytest tests/
