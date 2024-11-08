@@ -6,3 +6,4 @@ from .wdi_get_lending_types import wdi_get_lending_types
 from .wdi_get_languages import wdi_get_languages
 from .wdi_get_geographies import wdi_get_geographies
 from .wdi_get_indicators import wdi_get_indicators
+from .wdi_search import wdi_search
