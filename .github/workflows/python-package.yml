@@ -10,7 +10,7 @@ permissions: read-all
 
 jobs:
   build:
-    runs-on: ${{ matrix.config.os }}
+    runs-on: ${{ matrix.os }}
 
     name: ${{ matrix.os }} (${{ matrix.python-version }})
 
