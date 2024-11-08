@@ -11,8 +11,8 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
 
     Parameters:
     ----------
-    language : str, optional
-        A string specifying the language code for the API response (default is "en" for English).
+    language (str): A string specifying the language code for the API response 
+                    (default is "en" for English).
 
     Returns:
     -------
@@ -38,7 +38,7 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
 
     Examples:
     --------
-    >>> # Download all available data sources in English
+    Download all available data sources in English
     >>> wdi_get_sources()
     """
     sources_raw = perform_request("sources", language=language)
@@ -55,7 +55,7 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
         })
         .with_columns(
             source_id = pl.col("source_id").cast(pl.Int64),
-            source_name = pl.col("source_name").str.strip_chars_end(),
+            source_name = pl.col("source_name").str.strip_chars(),
             update_date = pl.col("update_date").str.to_date(),
             is_data_available = pl.col("is_data_available") == "Y",
             is_metadata_available = pl.col("is_metadata_available") == "Y",

@@ -11,8 +11,8 @@ def wdi_get_regions(language: str = "en") -> pl.DataFrame:
 
     Parameters:
     ----------
-    language : str, optional
-        A string specifying the language code for the API response (default is "en" for English).
+    language (str): A string specifying the language code for the API response 
+                    (default is "en" for English).
 
     Returns:
     -------
@@ -35,7 +35,7 @@ def wdi_get_regions(language: str = "en") -> pl.DataFrame:
 
     Examples:
     --------
-    >>> # Download all regions in English
+    Download all regions in English
     >>> wdi_get_regions()
     """
     regions_raw = perform_request("region", language=language)

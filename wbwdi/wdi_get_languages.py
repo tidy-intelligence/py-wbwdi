@@ -27,7 +27,7 @@ def wdi_get_languages() -> pl.DataFrame:
     https://api.worldbank.org/v2/languages
 
     Examples:
-    >>> # Download all languages
+    Download all languages
     >>> wdi_get_languages()
     """
 

@@ -1,7 +1,7 @@
 import polars as pl
 from .perform_request import perform_request
 
-def wdi_get_geographies(language="en", per_page=1000):
+def wdi_get_geographies(language="en", per_page=1000) -> pl.DataFrame:
     """
     Download all countries and regions from the World Bank API.
 
@@ -11,6 +11,7 @@ def wdi_get_geographies(language="en", per_page=1000):
     capital city, and coordinates.
 
     Parameters:
+    -----------
     language (str): A character string specifying the language for the API response. 
                     Defaults to "en" (English). Other supported options include "es" 
                     (Spanish), "fr" (French), and others depending on the API.
@@ -18,6 +19,7 @@ def wdi_get_geographies(language="en", per_page=1000):
                     Defaults to 1000.
 
     Returns:
+    -----------
     pl.DataFrame
         A DataFrame with the following columns:
         - `geography_id`: A character string representing the geography's unique identifier.
@@ -41,6 +43,7 @@ def wdi_get_geographies(language="en", per_page=1000):
         - `latitude`: A numeric value for the latitude of the geography.
 
     Details:
+    -----------
     This function sends a request to the World Bank API to retrieve data for all 
     supported geographies in the specified language. The data is then processed into 
     a tidy format and includes information about the country, such as its ISO code, 
@@ -48,13 +51,15 @@ def wdi_get_geographies(language="en", per_page=1000):
     income levels, and lending types.
 
     Source:
+    -----------
     https://api.worldbank.org/v2/geographies
 
     Examples:
-    >>> # Download all geographies in English
+    -----------
+    Download all geographies in English
     >>> wdi_get_geographies()
 
-    >>> # Download all geographies in Spanish
+    Download all geographies in Spanish
     >>> wdi_get_geographies(language="es")
     """
     geographies_raw = perform_request("countries/all", language, per_page)
@@ -95,5 +100,5 @@ def wdi_get_geographies(language="en", per_page=1000):
             pl.col("lending_type_iso2code"), pl.col("longitude"), pl.col("latitude")
         )
     )
-    
+
     return geographies_processed

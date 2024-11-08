@@ -1,7 +1,7 @@
 import polars as pl
 from .perform_request import perform_request
 
-def wdi_get_lending_types(language="en"):
+def wdi_get_lending_types(language="en") -> pl.DataFrame:
     """
     Download lending types from the World Bank API.
 
@@ -31,7 +31,7 @@ def wdi_get_lending_types(language="en"):
     https://api.worldbank.org/v2/lendingTypes
 
     Examples:
-    >>> # Download all lending types in English
+    Download all lending types in English
     >>> wdi_get_lending_types()
     """
 

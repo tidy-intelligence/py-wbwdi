@@ -9,8 +9,8 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
 
     Parameters:
     ----------
-    language : str, optional
-        A string specifying the language code for the API response (default is "en" for English).
+    language (str): A string specifying the language code for the API response 
+                    (default is "en" for English).
     
     Returns:
     -------
@@ -29,7 +29,7 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
     https://api.worldbank.org/v2/topics
 
     Examples:
-    >>> # Download all available topics in English
+    Download all available topics in English
     >>> wdi_get_topics()
     """
     topics_raw = perform_request("topics", language=language)
@@ -40,8 +40,8 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
         )
         .with_columns(
             topic_id = pl.col("topic_id").cast(pl.Int64),
-            topic_name = pl.col("topic_name").str.strip_chars_end(),
-            topic_note = pl.col("topic_note").str.strip_chars_end()
+            topic_name = pl.col("topic_name").str.strip_chars(),
+            topic_note = pl.col("topic_note").str.strip_chars()
         )
     )
 
