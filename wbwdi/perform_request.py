@@ -58,8 +58,10 @@ def perform_request(
 
     url = create_request_url(base_url, resource, language, per_page, date, source)
 
+    headers={"User-Agent": "wbwdi Python library (https://github.com/tidy-intelligence/py-wbwdi)"}
+
     with httpx.Client() as client:
-        response = client.get(url)
+        response = client.get(url, headers=headers)
         if is_request_error(response):
             handle_request_error(response)
             return None
