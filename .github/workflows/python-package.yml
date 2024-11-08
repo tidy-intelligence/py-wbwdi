@@ -1,4 +1,4 @@
-name: Python Package
+name: Test Python Package
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.10', '3.11']
 
     defaults:
       run:
@@ -55,4 +55,4 @@ jobs:
       - name: Run tests
         run: |
           source $VENV
-          pytest --version
+          pytest tests/
