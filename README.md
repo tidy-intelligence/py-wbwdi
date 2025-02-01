@@ -1,8 +1,8 @@
 # py-wbwdi
 ![PyPI](https://img.shields.io/pypi/v/wbwdi?label=pypi%20package)
 ![PyPI Downloads](https://img.shields.io/pypi/dm/wbwdi)
-[![python-package.yml](https://github.com/tidy-finance/py-wbwdi/actions/workflows/python-package.yml/badge.svg)](https://github.com/tidy-finance/py-wbwdi/actions/workflows/python-package.yml)
-[![codecov.yml](https://codecov.io/gh/tidy-finance/py-wbwdi/graph/badge.svg)](https://app.codecov.io/gh/tidy-finance/py-wbwdi)
+[![python-package.yml](https://github.com/tidy-intelligence/py-wbwdi/actions/workflows/python-package.yml/badge.svg)](https://github.com/tidy-intelligence/py-wbwdi/actions/workflows/python-package.yml)
+[![codecov.yml](https://codecov.io/gh/tidy-intelligence/py-wbwdi/graph/badge.svg)](https://app.codecov.io/gh/tidy-intelligence/py-wbwdi)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
