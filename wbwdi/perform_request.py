@@ -77,8 +77,6 @@ def perform_request(
                 page_response = client.get(paginated_url)
                 if progress:
                     print_progress(page, pages)
-                if is_request_error(page_response):
-                    handle_request_error(page_response)
                 results.extend(page_response.json()[1])
             return results
 

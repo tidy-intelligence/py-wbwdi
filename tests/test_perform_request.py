@@ -98,9 +98,28 @@ def test_error_handling(httpx_mock: HTTPXMock):
         ]}
     ]
 
-    httpx_mock.add_response(json=example_body)
+    httpx_mock.add_response(status_code = 200, json=example_body)
 
     with httpx.Client() as client:
         with pytest.raises(RuntimeError) as exc_info:
             perform_request("invalid_resource")
         assert "Error code: 120" in str(exc_info.value)
+    
+def test_error_handling2(httpx_mock: HTTPXMock):
+    example_body = [
+        {"message": [
+            {
+                "id": "120",
+                "key": "Invalid value",
+                "value": "The provided parameter value is not valid"
+            }
+        ]}
+    ]
+
+    httpx_mock.add_response(status_code=404, json=example_body)
+
+    with httpx.Client() as client:
+        with pytest.raises(RuntimeError) as exc_info:
+            perform_request("invalid_resource")
+        assert "Error code: 120" in str(exc_info.value)
+    
