@@ -8,7 +8,7 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.or
 
 `wbwdi` is a Polars-based Python library to access and analyze the World Bank’s World Development Indicators (WDI) using the corresponding [API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation). WDI provides more than 24,000 country or region-level indicators for various contexts. `wbwdi` enables users to download, process and work with WDI series across multiple geographies and time periods.
 
-This library is a product of Christoph Scheuch and not sponsored by or affiliated with the World Bank in any way. For an R implementation, please consider the [`r-wbwdi`](https://github.com/tidy-intelligence/r-wbwdi) package.
+This library is a product of Christoph Scheuch and not sponsored by or affiliated with the World Bank in any way. For an R implementation, please consider the [`r-wbwdi`](https://github.com/tidy-intelligence/r-wbwdi) package. For packages with a shared design philosophy, check out the [econdataverse](https://www.econdataverse.org/).
 
 ## Installation
 
