@@ -19,40 +19,17 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.10', '3.11']
 
-    defaults:
-      run:
-        shell: bash
-
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        id: setup-python
-        uses: actions/setup-python@v5
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@v4
         with:
-          python-version: ${{ matrix.python-version}}
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-
-      - name: Load cached venv
-        id: cached-pip-wheels
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install depedencies
-        run: poetry install --no-interaction --no-root
-
-      - name: Install library
-        run: poetry install --no-interaction
+      - name: Sync dependencies
+        run: uv sync --all-extras --dev
 
       - name: Run tests
-        run: |
-          source $VENV
-          pytest tests/
+        run: uv run pytest tests
