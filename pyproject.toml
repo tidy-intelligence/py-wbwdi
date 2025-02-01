@@ -6,13 +6,17 @@ build-backend = "hatchling.build"
 name = "wbwdi"
 authors = [{name = "Christoph Scheuch", email = "christoph@tidy-intelligence.com"}]
 version = "0.1.0"
-description = "Access and Analyze World Bank World Development Indicators"
+description = "Access and Analyze World Bank World Development Indicators with Polars"
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.28.1",
     "polars>=1.0.0",
+]
+
+[dependency-groups]
+dev = [
     "pytest>=8.3.4",
     "pytest-httpx>=0.35.0",
     "pytest-cov>=6.0.0"
