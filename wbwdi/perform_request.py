@@ -64,7 +64,6 @@ def perform_request(
         response = client.get(url, headers=headers)
         if is_request_error(response):
             handle_request_error(response)
-            return None
 
         body = response.json()
         pages = int(body[0]["pages"])
@@ -80,7 +79,6 @@ def perform_request(
                     print_progress(page, pages)
                 if is_request_error(page_response):
                     handle_request_error(page_response)
-                    return None
                 results.extend(page_response.json()[1])
             return results
 

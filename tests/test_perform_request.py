@@ -14,46 +14,16 @@ from wbwdi.perform_request import (
     print_progress
 )
 
-# Test data fixtures
-@pytest.fixture
-def single_page_response() -> List[Dict[str, Any]]:
-    return [
+# Test perform_request function
+def test_perform_request_single_page(httpx_mock: HTTPXMock):
+    """Test successful single page request"""
+    single_page_response = [
         {"page": 1, "pages": 1, "per_page": 1000, "total": 2},
         [
             {"id": "HIC", "name": "High income"},
             {"id": "LIC", "name": "Low income"}
         ]
     ]
-
-@pytest.fixture
-def multi_page_response() -> List[Dict[str, Any]]:
-    return [
-        {"page": 1, "pages": 2, "per_page": 1, "total": 2},
-        [{"id": "HIC", "name": "High income"}]
-    ]
-
-@pytest.fixture
-def second_page_response() -> List[Dict[str, Any]]:
-    return [
-        {"page": 2, "pages": 2, "per_page": 1, "total": 2},
-        [{"id": "LIC", "name": "Low income"}]
-    ]
-
-@pytest.fixture
-def error_response() -> Dict[str, List[Dict[str, Any]]]:
-    return {
-        "message": [
-            {
-                "id": "120",
-                "key": "Invalid value",
-                "value": "The provided parameter value is not valid"
-            }
-        ]
-    }
-
-# Test perform_request function
-def test_perform_request_single_page(httpx_mock: HTTPXMock, single_page_response):
-    """Test successful single page request"""
     httpx_mock.add_response(
         method="GET",
         url="https://api.worldbank.org/v2/incomeLevels?format=json&per_page=1000",
@@ -79,20 +49,6 @@ def test_perform_request_with_options():
     expected = "https://api.worldbank.org/v2/en/incomeLevels?format=json&per_page=1000&date=2020:2022&source=2"
     assert url == expected
 
-def test_perform_request_error(httpx_mock: HTTPXMock, error_response):
-    """Test handling of API error response"""
-    httpx_mock.add_response(
-        method="GET",
-        url="https://api.worldbank.org/v2/invalid_resource?format=json&per_page=1000",
-        json=[error_response],
-        status_code=400,
-        headers={"Content-Type": "application/json"}
-    )
-    
-    with pytest.raises(RuntimeError) as exc_info:
-        perform_request("invalid_resource")
-    assert "Error code: 120" in str(exc_info.value)
-
 def test_validate_per_page_valid():
     """Test valid per_page values"""
     validate_per_page(1)
@@ -108,7 +64,7 @@ def test_validate_per_page_invalid():
     with pytest.raises(ValueError):
         validate_per_page("1000")
     
-def test_is_request_error(httpx_mock: HTTPXMock, error_response):
+def test_is_request_error(httpx_mock: HTTPXMock):
     """Test error detection in responses"""
     # Test status code error
     httpx_mock.add_response(
@@ -128,3 +84,23 @@ def test_print_progress(capsys):
 def test_multiple_pages():
     perform_request("languages", per_page = 5)
 
+def test_print_progress2():
+    perform_request("languages", per_page = 5, progress=True)
+
+def test_error_handling(httpx_mock: HTTPXMock):
+    example_body = [
+        {"message": [
+            {
+                "id": "120",
+                "key": "Invalid value",
+                "value": "The provided parameter value is not valid"
+            }
+        ]}
+    ]
+
+    httpx_mock.add_response(json=example_body)
+
+    with httpx.Client() as client:
+        with pytest.raises(RuntimeError) as exc_info:
+            perform_request("invalid_resource")
+        assert "Error code: 120" in str(exc_info.value)
