@@ -4,8 +4,8 @@ from wbwdi.perform_request import perform_request
 
 geographies = ["US", "CA", "GB"]
 indicators = ["NY.GDP.PCAP.KD", "SP.POP.TOTL"]
-start_date = None
-end_date = None
+start_year = None
+end_year = None
 frequency = "annual"
 language = "en"
 per_page = 1000
@@ -13,7 +13,7 @@ progress = True
 source = None
 format = "long"
 
-def wdi_get(geographies, indicators, start_date=None, end_date=None, frequency="annual", 
+def wdi_get(geographies, indicators, start_year=None, end_year=None, frequency="annual", 
             language="en", per_page=1000, progress=True, source=None, format="long"):
     """
     Download World Bank indicator data for specific geographies and time periods.
@@ -26,8 +26,8 @@ def wdi_get(geographies, indicators, start_date=None, end_date=None, frequency="
     Parameters:
     geographies (list of str): A list of ISO 2-country codes, or "all" to retrieve data for all geographies.
     indicators (list of str): A list specifying one or more World Bank indicators to download (e.g., ["NY.GDP.PCAP.KD", "SP.POP.TOTL"]).
-    start_date (int, optional): The starting year for the data.
-    end_date (int, optional): The ending year for the data.
+    start_year (int, optional): The starting year for the data.
+    end_year (int, optional): The ending year for the data.
     frequency (str): The frequency of the data ("annual", "quarter", "month"). Defaults to "annual".
     language (str): The language for the request. See wdi_get_languages for options. Defaults to "en".
     per_page (int): The number of results per page for the API. Defaults to 1000.
@@ -61,13 +61,13 @@ def wdi_get(geographies, indicators, start_date=None, end_date=None, frequency="
     >>> wdi_get(["US", "CA", "GB"], "NY.GDP.PCAP.KD")
 
     # Download single indicator for a specific time frame
-    >>> wdi_get(["US", "CA", "GB"], "DPANUSSPB", start_date=2012, end_date=2013)
+    >>> wdi_get(["US", "CA", "GB"], "DPANUSSPB", start_year=2012, end_year=2013)
 
     # Download single indicator for monthly frequency
-    >>> wdi_get("AT", "DPANUSSPB", start_date=2012, end_date=2015, frequency="month")
+    >>> wdi_get("AT", "DPANUSSPB", start_year=2012, end_year=2015, frequency="month")
 
     # Download single indicator for quarterly frequency
-    >>> wdi_get("NG", "DT.DOD.DECT.CD.TL.US", start_date=2012, end_date=2015, frequency="quarter")
+    >>> wdi_get("NG", "DT.DOD.DECT.CD.TL.US", start_year=2012, end_year=2015, frequency="quarter")
 
     # Download single indicator for all geographies and disable progress bar
     >>> wdi_get("all", "NY.GDP.PCAP.KD", progress=False)
@@ -93,19 +93,19 @@ def wdi_get(geographies, indicators, start_date=None, end_date=None, frequency="
     validate_source(source)
     validate_format(format)
 
-    if frequency == "annual" and start_date and end_date:
-        start_date = str(start_date)
-        end_date = str(end_date)
-    elif frequency == "quarter" and start_date and end_date:
-        start_date = f"{start_date}Q1"
-        end_date = f"{end_date}Q4"
-    elif frequency == "month" and start_date and end_date:
-        start_date = f"{start_date}M01"
-        end_date = f"{end_date}M12"
+    if frequency == "annual" and start_year and end_year:
+        start_year = str(start_year)
+        end_year = str(end_year)
+    elif frequency == "quarter" and start_year and end_year:
+        start_year = f"{start_year}Q1"
+        end_year = f"{end_year}Q4"
+    elif frequency == "month" and start_year and end_year:
+        start_year = f"{start_year}M01"
+        end_year = f"{end_year}M12"
 
     indicators_processed = pl.concat([
         get_indicator(
-            indicator, geographies, start_date, end_date,
+            indicator, geographies, start_year, end_year,
             language, per_page, progress, source
         )
         for indicator in indicators
@@ -141,13 +141,13 @@ def validate_format(format):
     if format not in ["long", "wide"]:
         raise ValueError("`format` must be either 'long' or 'wide'.")
 
-def create_date(start_date, end_date):
-    return f"{start_date}:{end_date}" if start_date and end_date else None
+def create_date(start_year, end_year):
+    return f"{start_year}:{end_year}" if start_year and end_year else None
 
-def get_indicator(indicator, geographies, start_date, end_date,
+def get_indicator(indicator, geographies, start_year, end_year,
                   language, per_page, progress, source):
     progress_req = f"Sending requests for indicator {indicator}" if progress else None
-    date = create_date(start_date, end_date)
+    date = create_date(start_year, end_year)
     resource = f"country/{';'.join(geographies)}/indicator/{indicator}"
     indicator_raw = perform_request(resource, language, per_page, date, source, progress_req)
 
