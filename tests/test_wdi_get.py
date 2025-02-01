@@ -85,3 +85,22 @@ def test_invalid_indicator():
 
     assert expected_error_message in str(excinfo.value), "The error message did not match the expected output."
         
+def test_invalid_progress():
+    with pytest.raises(Exception) as excinfo:
+        wdi_get("US", "NY.GDP.PCAP.KD", start_year=2020, end_year=2021, progress=None)
+
+    expected_error_message = (
+        "`progress` must be either True or False."
+    )
+
+    assert expected_error_message in str(excinfo.value), "The error message did not match the expected output."
+
+def test_invalid_source():
+    with pytest.raises(Exception) as excinfo:
+        wdi_get("US", "NY.GDP.PCAP.KD", start_year=2020, end_year=2021, source=999999)
+
+    expected_error_message = (
+        "`source` is not supported. Please call `wdi_get_sources()`."
+    )
+
+    assert expected_error_message in str(excinfo.value), "The error message did not match the expected output."
