@@ -25,7 +25,7 @@ def wdi_get_geographies(language="en", per_page=1000) -> pl.DataFrame:
         - `geography_id`: A character string representing the geography's unique identifier.
         - `geography_name`: A character string for the name of the geography.
         - `geography_iso2code`: A character string for the ISO2 country code.
-        - `geography_type`: A character string for the type of the geography ("country" or "region").
+        - `geography_type`: A character string for the type of the geography ("country" or "aggregate").
         - `region_id`: A character string representing the region's unique identifier.
         - `region_name`: A character string for the name of the region.
         - `region_iso2code`: A character string for the ISO2 region code.
@@ -78,7 +78,7 @@ def wdi_get_geographies(language="en", per_page=1000) -> pl.DataFrame:
         .with_columns(
             longitude = pl.when(pl.col("longitude") == "").then(None).otherwise(pl.col("longitude")).cast(pl.Float64),
             latitude = pl.when(pl.col("latitude") == "").then(None).otherwise(pl.col("latitude")).cast(pl.Float64),
-            geography_type = pl.when(pl.col("region_name") == "Aggregates").then(pl.lit("Region")).otherwise(pl.lit("Country"))
+            geography_type = pl.when(pl.col("region_name") == "Aggregates").then(pl.lit("aggregate")).otherwise(pl.lit("country"))
         )
     )
 
