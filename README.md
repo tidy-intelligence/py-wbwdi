@@ -12,7 +12,7 @@ This library is a product of Christoph Scheuch and not sponsored by or affiliate
 
 ## Installation
 
-You can install the release version from PyPI: 
+You can install the release version from [PyPI](https://pypi.org/project/wbwdi/): 
 
 ```python
 pip install wbwdi
