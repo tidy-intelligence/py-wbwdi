@@ -3,7 +3,6 @@
 ## v1.0.0 (2025-02-25)
 
 - Enhanced the `wdi_get()` function to support monthly and quarterly frequencies for specific indicators, allowing for more granular data analysis.
-- Ensured a consistent interface with the `wbids` package, enabling seamless integration when working with both World Development Indicators and International Debt Statistics.
 - Addressed problems with API requests to ensure reliable data fetching and handling of responses.
 - Provided detailed examples and use cases in the package vignettes to guide users in effectively utilizing the package's features.
 - Improved function documentation to clearly explain parameters, return values, and usage examples.
