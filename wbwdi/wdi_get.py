@@ -2,32 +2,23 @@ import polars as pl
 from wbwdi.wdi_get_sources import wdi_get_sources
 from wbwdi.perform_request import perform_request
 
-geographies = ["US", "CA", "GB"]
-indicators = ["NY.GDP.PCAP.KD", "SP.POP.TOTL"]
-start_year = None
-end_year = None
-frequency = "annual"
-language = "en"
-per_page = 1000
-progress = True
-source = None
-format = "long"
-
-def wdi_get(geographies, indicators, start_year=None, end_year=None, frequency="annual", 
+def wdi_get(entities, indicators, start_year=None, end_year=None, most_recent_only=False, frequency="annual", 
             language="en", per_page=1000, progress=True, source=None, format="long"):
     """
-    Download World Bank indicator data for specific geographies and time periods.
+    Download World Bank indicator data for specific entities and time periods.
 
     This function retrieves indicator data from the World Bank API for a specified set 
-    of geographies and indicators. The user can specify one or more indicators, a date 
+    of entities and indicators. The user can specify one or more indicators, a date 
     range, and other options to tailor the request. The data is processed and returned 
     in a tidy format, including country, indicator, date, and value fields.
 
     Parameters:
-    geographies (list of str): A list of ISO 2-country codes, or "all" to retrieve data for all geographies.
+    -----------
+    entities (list of str): A list of ISO 2-country codes, or "all" to retrieve data for all entities.
     indicators (list of str): A list specifying one or more World Bank indicators to download (e.g., ["NY.GDP.PCAP.KD", "SP.POP.TOTL"]).
     start_year (int, optional): The starting year for the data.
     end_year (int, optional): The ending year for the data.
+    most_recent_only (bool): A logical value indicating whether to download only the most recent value. In case of True, it overrides `start_year` and `end_year`. Defaults to False.
     frequency (str): The frequency of the data ("annual", "quarter", "month"). Defaults to "annual".
     language (str): The language for the request. See wdi_get_languages for options. Defaults to "en".
     per_page (int): The number of results per page for the API. Defaults to 1000.
@@ -40,7 +31,7 @@ def wdi_get(geographies, indicators, start_year=None, end_year=None, frequency="
     pl.DataFrame
         A DataFrame with the following columns:
         - `indicator_id`: The ID of the indicator (e.g., "NY.GDP.PCAP.KD").
-        - `geography_id`: The ISO 2-country code of the country or region for which the data was retrieved.
+        - `entity_id`: The ISO 2-country code of the country or region for which the data was retrieved.
         - `year`: The year of the indicator data as an integer.
         - `quarter` (optional`: The quarter of the indicator data as an integer.
         - `month` (optional): The month of the indicator data as an integer.
@@ -48,7 +39,7 @@ def wdi_get(geographies, indicators, start_year=None, end_year=None, frequency="
 
     Details:
     This function constructs a request URL for the World Bank API, retrieves the relevant 
-    data for the given geographies and indicators, and processes the response into a tidy 
+    data for the given entities and indicators, and processes the response into a tidy 
     format. The user can optionally specify a date range, and the function will handle 
     requests for multiple pages if necessary. If `progress` is True, messages will be 
     displayed during the request and parsing process.
@@ -57,55 +48,60 @@ def wdi_get(geographies, indicators, start_year=None, end_year=None, frequency="
     for each indicator and then combining the results into a single tidy DataFrame.
 
     Examples:
-    # Download single indicator for multiple geographies
-    >>> wdi_get(["US", "CA", "GB"], "NY.GDP.PCAP.KD")
+    # Download single indicator for multiple entities
+    >>> wdi_get(["USA", "CAN", "GBR"], "NY.GDP.PCAP.KD")
 
     # Download single indicator for a specific time frame
-    >>> wdi_get(["US", "CA", "GB"], "DPANUSSPB", start_year=2012, end_year=2013)
+    >>> wdi_get(["USA", "CAN", "GBR"], "DPANUSSPB", start_year=2012, end_year=2013)
 
     # Download single indicator for monthly frequency
-    >>> wdi_get("AT", "DPANUSSPB", start_year=2012, end_year=2015, frequency="month")
+    >>> wdi_get("AUT", "DPANUSSPB", start_year=2012, end_year=2015, frequency="month")
 
     # Download single indicator for quarterly frequency
-    >>> wdi_get("NG", "DT.DOD.DECT.CD.TL.US", start_year=2012, end_year=2015, frequency="quarter")
+    >>> wdi_get("NGA", "DT.DOD.DECT.CD.TL.US", start_year=2012, end_year=2015, frequency="quarter")
 
-    # Download single indicator for all geographies and disable progress bar
+    # Download single indicator for all entities and disable progress bar
     >>> wdi_get("all", "NY.GDP.PCAP.KD", progress=False)
 
-    # Download multiple indicators for multiple geographies
-    >>> wdi_get(["US", "CA", "GB"], ["NY.GDP.PCAP.KD", "SP.POP.TOTL"])
+    # Download multiple indicators for multiple entities
+    >>> wdi_get(["USA", "CAN", "GBR"], ["NY.GDP.PCAP.KD", "SP.POP.TOTL"])
 
     # Download indicators for different sources
-    >>> wdi_get("DE", "SG.LAW.INDX", source=2)
-    >>> wdi_get("DE", "SG.LAW.INDX", source=14)
+    >>> wdi_get("DEU", "SG.LAW.INDX", source=2)
+    >>> wdi_get("DEU", "SG.LAW.INDX", source=14)
 
     # Download indicators in wide format
-    >>> wdi_get(["US", "CA", "GB"], ["NY.GDP.PCAP.KD"], format="wide")
-    >>> wdi_get(["US", "CA", "GB"], ["NY.GDP.PCAP.KD", "SP.POP.TOTL"], format="wide")
+    >>> wdi_get(["USA", "CAN", "GBR"], ["NY.GDP.PCAP.KD"], format="wide")
+    >>> wdi_get(["USA", "CAN", "GBR"], ["NY.GDP.PCAP.KD", "SP.POP.TOTL"], format="wide")
+
+    # Download most recent value only
+    >>> wdi_get("USA", "SP.POP.TOTL", most_recent_only=True)
     """
-    if isinstance(geographies, str):
-        geographies = [geographies] 
+    if isinstance(entities, str):
+        entities = [entities] 
     if isinstance(indicators, str):
         indicators = [indicators]
 
+    validate_most_recent_only(most_recent_only)
     validate_frequency(frequency)
     validate_progress(progress)
     validate_source(source)
     validate_format(format)
 
-    if frequency == "annual" and start_year and end_year:
-        start_year = str(start_year)
-        end_year = str(end_year)
-    elif frequency == "quarter" and start_year and end_year:
-        start_year = f"{start_year}Q1"
-        end_year = f"{end_year}Q4"
-    elif frequency == "month" and start_year and end_year:
-        start_year = f"{start_year}M01"
-        end_year = f"{end_year}M12"
+    if not most_recent_only:
+        if frequency == "annual" and start_year and end_year:
+            start_year = str(start_year)
+            end_year = str(end_year)
+        elif frequency == "quarter" and start_year and end_year:
+            start_year = f"{start_year}Q1"
+            end_year = f"{end_year}Q4"
+        elif frequency == "month" and start_year and end_year:
+            start_year = f"{start_year}M01"
+            end_year = f"{end_year}M12"
 
     indicators_processed = pl.concat([
         get_indicator(
-            indicator, geographies, start_year, end_year,
+            indicator, entities, start_year, end_year, most_recent_only,
             language, per_page, progress, source
         )
         for indicator in indicators
@@ -114,13 +110,17 @@ def wdi_get(geographies, indicators, start_year=None, end_year=None, frequency="
     if format == "wide":
         indicators_processed = (indicators_processed
             .pivot(
-                index=["geography_id", "year"], 
+                index=["entity_id", "year"], 
                 on="indicator_id", 
                 values="value"
             )
         )
     
     return indicators_processed
+
+def validate_most_recent_only(most_recent_only):
+    if not isinstance(most_recent_only, bool):
+        raise ValueError("`most_recent_only` must be either True or False.")
 
 def validate_frequency(frequency):
     valid_frequencies = ["annual", "quarter", "month"]
@@ -144,12 +144,12 @@ def validate_format(format):
 def create_date(start_year, end_year):
     return f"{start_year}:{end_year}" if start_year and end_year else None
 
-def get_indicator(indicator, geographies, start_year, end_year,
+def get_indicator(indicator, entities, start_year, end_year, most_recent_only,
                   language, per_page, progress, source):
     progress_req = f"Sending requests for indicator {indicator}" if progress else None
     date = create_date(start_year, end_year)
-    resource = f"country/{';'.join(geographies)}/indicator/{indicator}"
-    indicator_raw = perform_request(resource, language, per_page, date, source, progress_req)
+    resource = f"country/{';'.join(entities)}/indicator/{indicator}"
+    indicator_raw = perform_request(resource, language, per_page, date, most_recent_only, source, progress_req)
 
     indicator_parsed = (pl.DataFrame(indicator_raw)
         .rename({"value" : "_value"})
@@ -157,9 +157,9 @@ def get_indicator(indicator, geographies, start_year, end_year,
         .rename({"id": "indicator_id"})
         .drop("value")
         .unnest("country")
-        .rename({"id": "geography_id"})
+        .rename({"id": "entity_id"})
         .drop("value")
-        .select(["indicator_id", "geography_id", "date", "_value"])
+        .select(["indicator_id", "entity_id", "date", "_value"])
         .rename({"_value": "value"})
         .with_columns(
             value = pl.col("value").cast(pl.Float64)

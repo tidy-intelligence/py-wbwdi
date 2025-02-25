@@ -1,13 +1,13 @@
 import polars as pl
 from .perform_request import perform_request
 
-def wdi_get_geographies(language="en", per_page=1000) -> pl.DataFrame:
+def wdi_get_entities(language="en", per_page=1000) -> pl.DataFrame:
     """
     Download all countries and regions from the World Bank API.
 
-    This function retrieves information about geographies (countries and regions) 
+    This function retrieves information about entities (countries and regions) 
     from the World Bank API. It returns a DataFrame containing various details such 
-    as the geography's ID, ISO2 code, name, region information, lending type, 
+    as the entity's ID, ISO2 code, name, region information, lending type, 
     capital city, and coordinates.
 
     Parameters:
@@ -22,50 +22,50 @@ def wdi_get_geographies(language="en", per_page=1000) -> pl.DataFrame:
     -----------
     pl.DataFrame
         A DataFrame with the following columns:
-        - `geography_id`: A character string representing the geography's unique identifier.
-        - `geography_name`: A character string for the name of the geography.
-        - `geography_iso2code`: A character string for the ISO2 country code.
-        - `geography_type`: A character string for the type of the geography ("country" or "region").
+        - `entity_id`: A character string representing the entity's unique identifier.
+        - `entity_name`: A character string for the name of the entity.
+        - `entity_iso2code`: A character string for the ISO2 country code.
+        - `entity_type`: A character string for the type of the entity ("country" or "aggregate").
         - `region_id`: A character string representing the region's unique identifier.
         - `region_name`: A character string for the name of the region.
         - `region_iso2code`: A character string for the ISO2 region code.
         - `admin_region_id`: A character string representing the administrative region's unique identifier.
         - `admin_region_name`: A character string for the name of the administrative region.
         - `admin_region_iso2code`: A character string for the ISO2 code of the administrative region.
-        - `income_level_id`: A character string representing the geography's income level.
+        - `income_level_id`: A character string representing the entity's income level.
         - `income_level_name`: A character string for the name of the income level.
         - `income_level_iso2code`: A character string for the ISO2 code of the income level.
         - `lending_type_id`: A character string representing the lending type's unique identifier.
         - `lending_type_name`: A character string for the name of the lending type.
         - `lending_type_iso2code`: A character string for the ISO2 code of the lending type.
         - `capital_city`: A character string for the name of the capital city.
-        - `longitude`: A numeric value for the longitude of the geography.
-        - `latitude`: A numeric value for the latitude of the geography.
+        - `longitude`: A numeric value for the longitude of the entity.
+        - `latitude`: A numeric value for the latitude of the entity.
 
     Details:
     -----------
     This function sends a request to the World Bank API to retrieve data for all 
-    supported geographies in the specified language. The data is then processed into 
+    supported entities in the specified language. The data is then processed into 
     a tidy format and includes information about the country, such as its ISO code, 
     capital city, geographical coordinates, and additional metadata about regions, 
     income levels, and lending types.
 
     Source:
     -----------
-    https://api.worldbank.org/v2/geographies
+    https://api.worldbank.org/v2/entities
 
     Examples:
     -----------
-    Download all geographies in English
-    >>> wdi_get_geographies()
+    Download all entities in English
+    >>> wdi_get_entities()
 
-    Download all geographies in Spanish
-    >>> wdi_get_geographies(language="es")
+    Download all entities in Spanish
+    >>> wdi_get_entities(language="es")
     """
-    geographies_raw = perform_request("countries/all", language, per_page)
+    entities_raw = perform_request("countries/all", language, per_page)
 
-    geographies_processed = (pl.DataFrame(geographies_raw)
-        .rename({"id": "geography_id", "iso2Code": "geography_iso2code", "name": "geography_name"})
+    entities_processed = (pl.DataFrame(entities_raw)
+        .rename({"id": "entity_id", "iso2Code": "entity_iso2code", "name": "entity_name"})
         .unnest("region")
         .rename({"id": "region_id", "iso2code": "region_iso2code", "value": "region_name"})
         .unnest("adminregion")
@@ -78,22 +78,22 @@ def wdi_get_geographies(language="en", per_page=1000) -> pl.DataFrame:
         .with_columns(
             longitude = pl.when(pl.col("longitude") == "").then(None).otherwise(pl.col("longitude")).cast(pl.Float64),
             latitude = pl.when(pl.col("latitude") == "").then(None).otherwise(pl.col("latitude")).cast(pl.Float64),
-            geography_type = pl.when(pl.col("region_name") == "Aggregates").then(pl.lit("Region")).otherwise(pl.lit("Country"))
+            entity_type = pl.when(pl.col("region_name") == "Aggregates").then(pl.lit("aggregate")).otherwise(pl.lit("country"))
         )
     )
 
-    geographies_processed = (geographies_processed
+    entities_processed = (entities_processed
         .with_columns([
             pl.when(pl.col(column) == "").then(None).otherwise(pl.col(column)).alias(column)
-            for column in geographies_processed.select(pl.col(pl.Utf8)).columns
+            for column in entities_processed.select(pl.col(pl.Utf8)).columns
         ])
         .with_columns([
             pl.col(column).str.strip_chars().alias(column)
-            for column in geographies_processed.select(pl.col(pl.Utf8)).columns
+            for column in entities_processed.select(pl.col(pl.Utf8)).columns
         ])
         .select(
-            pl.col("geography_id"), pl.col("geography_name"), pl.col("geography_iso2code"),
-            pl.col("geography_type"), pl.col("capital_city"), pl.col("region_id"), pl.col("region_name"),
+            pl.col("entity_id"), pl.col("entity_name"), pl.col("entity_iso2code"),
+            pl.col("entity_type"), pl.col("capital_city"), pl.col("region_id"), pl.col("region_name"),
             pl.col("region_iso2code"), pl.col("admin_region_id"), pl.col("admin_region_name"),
             pl.col("admin_region_iso2code"), pl.col("income_level_id"), pl.col("income_level_name"),
             pl.col("income_level_iso2code"), pl.col("lending_type_id"), pl.col("lending_type_name"),
@@ -101,4 +101,4 @@ def wdi_get_geographies(language="en", per_page=1000) -> pl.DataFrame:
         )
     )
 
-    return geographies_processed
+    return entities_processed
