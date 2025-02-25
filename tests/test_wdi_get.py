@@ -55,6 +55,10 @@ def test_wide_format():
     assert "NY.GDP.PCAP.KD" in result.columns, "Expected GDP indicator as column in wide format."
     assert "SP.POP.TOTL" in result.columns, "Expected population indicator as column in wide format."
 
+def test_invalid_most_recent_only():
+    with pytest.raises(ValueError, match="`most_recent_only` must be either True or False."):
+        wdi_get("US", "NY.GDP.PCAP.KD", most_recent_only = "FALSCH")
+
 def test_invalid_frequency():
     with pytest.raises(ValueError, match="`frequency` must be either 'annual', 'quarter', or 'month'."):
         wdi_get("US", "NY.GDP.PCAP.KD", start_year=2020, end_year=2021, frequency="daily")
