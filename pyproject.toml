@@ -8,7 +8,8 @@ authors = [{name = "Christoph Scheuch", email = "christoph@tidy-intelligence.com
 version = "1.0.0"
 description = "Seamless Access to World Bank World Development Indicators with Polars"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "MIT"
+license-files = ["LICEN[CS]E.*"]
 requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.28.1",
