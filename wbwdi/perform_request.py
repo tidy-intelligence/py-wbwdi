@@ -7,6 +7,7 @@ def perform_request(
     language: Optional[str] = None,
     per_page: int = 1000,
     date: Optional[str] = None,
+    most_recent_only: bool = False,
     source: Optional[str] = None,
     progress: bool = False,
     base_url: str = "https://api.worldbank.org/v2/"
@@ -56,7 +57,7 @@ def perform_request(
     
     validate_per_page(per_page)
 
-    url = create_request_url(base_url, resource, language, per_page, date, source)
+    url = create_request_url(base_url, resource, language, per_page, date, most_recent_only, source)
 
     headers={"User-Agent": "wbwdi Python library (https://github.com/tidy-intelligence/py-wbwdi)"}
 
@@ -86,12 +87,14 @@ def validate_per_page(per_page: int):
 
 def create_request_url(
     base_url: str, resource: str, language: Optional[str],
-    per_page: int, date: Optional[str], source: Optional[str]
+    per_page: int, date: Optional[str], most_recent_only: Optional[bool], source: Optional[str]
 ) -> str:
     if language:
         url = f"{base_url}{language}/{resource}?format=json&per_page={str(per_page)}"
     else:
         url = f"{base_url}{resource}?format=json&per_page={str(per_page)}"
+    if most_recent_only:
+        url += f"&mrv=1"
     if date:
         url += f"&date={str(date)}"
     if source:

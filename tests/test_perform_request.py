@@ -36,7 +36,7 @@ def test_perform_request_single_page(httpx_mock: HTTPXMock):
     assert result[0]["id"] == "HIC"
     assert result[1]["id"] == "LIC"
 
-def test_perform_request_with_options():
+def test_create_request_url():
     """Test request URL construction with all optional parameters"""
     url = create_request_url(
         "https://api.worldbank.org/v2/",
@@ -44,9 +44,10 @@ def test_perform_request_with_options():
         "en",
         1000,
         "2020:2022",
+        True,
         "2"
     )
-    expected = "https://api.worldbank.org/v2/en/incomeLevels?format=json&per_page=1000&date=2020:2022&source=2"
+    expected = "https://api.worldbank.org/v2/en/incomeLevels?format=json&per_page=1000&mrv=1&date=2020:2022&source=2"
     assert url == expected
 
 def test_validate_per_page_valid():

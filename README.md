@@ -32,7 +32,7 @@ The main function `wdi_get()` provides an interface to download multiple WDI ser
 from wbwdi import wdi_get
 
 wdi_get(
-  entities = ["MX", "CA", "US"], 
+  entities = ["MEX", "CAN", "USA"], 
   indicators = ["NY.GDP.PCAP.KD", "SP.POP.TOTL"],
   start_year = 2020, end_year = 2024
 )
