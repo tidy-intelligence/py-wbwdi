@@ -128,7 +128,7 @@ wdi_search(
 )
 ```
 
-## Relation to Existing Libraries
+## Relation to Existing Python Libraries
 
 There are already great libraries that allow you to interact with the World Bank WDI API. The two main reasons why this library exists are: (i) to have an implementation based on Polars rather than pandas, and (ii) to have an interface consistent with the [econdataverse](https://www.econdataverse.org/).
 
@@ -136,11 +136,3 @@ There are already great libraries that allow you to interact with the World Bank
 - [wbpy](https://github.com/mattduck/wbpy/)
 - [wbdata](https://github.com/oliversherouse/wbdata/)
 - [pandas_datareader](https://pandas-datareader.readthedocs.io/en/latest/readers/world-bank.html)
-
-## Contributing
-
-Feel free to open issues or submit pull requests to improve the package. Contributions are welcome!
-
-## License
-
-This package is licensed under the MIT License.
