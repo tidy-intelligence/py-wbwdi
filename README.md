@@ -6,7 +6,7 @@
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-`wbwdi` is a Polars-based Python library to access and analyze the World Bank’s World Development Indicators (WDI) using the corresponding [API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation). WDI provides more than 24,000 country or region-level indicators for various contexts. `wbwdi` enables users to download, process and work with WDI series across multiple geographies and time periods.
+`wbwdi` is a Polars-based Python library to access and analyze the World Bank’s World Development Indicators (WDI) using the corresponding [API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation). WDI provides more than 24,000 country or region-level indicators for various contexts. `wbwdi` enables users to download, process and work with WDI series across multiple entities and time periods.
 
 This library is a product of Christoph Scheuch and not sponsored by or affiliated with the World Bank in any way. For an R implementation, please consider the [`r-wbwdi`](https://github.com/tidy-intelligence/r-wbwdi) package. For packages with a shared design philosophy, check out the [econdataverse](https://www.econdataverse.org/).
 
@@ -26,23 +26,23 @@ pip install "git+https://github.com/tidy-intelligence/py-wbwdi"
 
 ## Usage
 
-The main function `wdi_get()` provides an interface to download multiple WDI series for multiple geographies and specific date ranges.
+The main function `wdi_get()` provides an interface to download multiple WDI series for multiple entities and specific date ranges.
 
 ```python
 from wbwdi import wdi_get
 
 wdi_get(
-  geographies = ["MX", "CA", "US"], 
+  entities = ["MX", "CA", "US"], 
   indicators = ["NY.GDP.PCAP.KD", "SP.POP.TOTL"],
   start_year = 2020, end_year = 2024
 )
 ```
 
-You can also download these indicators for all geographies and available dates:
+You can also download these indicators for all entities and available dates:
 
 ```python
 wdi_get(
-  geographies = "all", 
+  entities = "all", 
   indicators = ["NY.GDP.PCAP.KD", "SP.POP.TOTL"]
 )
 ```
@@ -51,7 +51,7 @@ Some indicators are also available on a monthly basis, e.g.:
 
 ```python
 wdi_get(
-  geographies = "AUT", 
+  entities = "AUT", 
   indicators = "DPANUSSPB",         
   start_year = 2012, end_year = 2015, 
   frequency = "month"
@@ -62,7 +62,7 @@ Similarly, there are also some indicators available on a quarterly frequency, e.
 
 ```python
 wdi_get(
-  geographies = "NGA", 
+  entities = "NGA", 
   indicators =  "DT.DOD.DECT.CD.TL.US",
   start_year = 2012, end_year = 2015, 
   frequency = "quarter"
@@ -77,21 +77,21 @@ from wbwdi import wdi_get_indicators
 wdi_get_indicators()
 ```
 
-You can get a list of all supported geographies via:
+You can get a list of all supported entities via:
 
 ```python
-from wbwdi import wdi_get_geographies
+from wbwdi import wdi_get_entities
 
-wdi_get_geographies()
+wdi_get_entities()
 ```
 
-You can also get the list of supported indicators and geographies in
+You can also get the list of supported indicators and entities in
 another language, but note that not everything seems to be translated
 into other languages:
 
 ```python
 wdi_get_indicators(language = "es")
-wdi_get_geographies(language = "zh")
+wdi_get_entities(language = "zh")
 ```
 
 Check out the following function for a list of supported languages:
