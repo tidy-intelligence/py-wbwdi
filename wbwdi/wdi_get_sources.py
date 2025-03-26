@@ -1,9 +1,10 @@
 import polars as pl
 
 from .perform_request import perform_request
+from .utils import convert_to_pandas
 
 
-def wdi_get_sources(language: str = "en") -> pl.DataFrame:
+def wdi_get_sources(language: str = "en", to_pandas: bool = False) -> pl.DataFrame:
     """
     Download data sources from the World Bank API.
 
@@ -15,6 +16,8 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
     ----------
     language (str): A string specifying the language code for the API response
                     (default is "en" for English).
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
+        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -------
@@ -76,5 +79,8 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
             pl.col("concepts"),
         )
     )
+
+    if to_pandas:
+        sources_processed = convert_to_pandas(sources_processed)
 
     return sources_processed

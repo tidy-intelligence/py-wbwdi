@@ -1,9 +1,10 @@
 import polars as pl
 
 from .perform_request import perform_request
+from .utils import convert_to_pandas
 
 
-def wdi_get_topics(language: str = "en") -> pl.DataFrame:
+def wdi_get_topics(language: str = "en", to_pandas: bool = False) -> pl.DataFrame:
     """
     This function returns a tibble of supported topics for querying the World
     Bank API. Topics represent the broad subject areas covered by the World
@@ -12,7 +13,9 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
     Parameters:
     ----------
     language (str): A string specifying the language code for the API response
-                    (default is "en" for English).
+        (default is "en" for English).
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
+        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -------
@@ -45,5 +48,8 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
             topic_note=pl.col("topic_note").str.strip_chars(),
         )
     )
+
+    if to_pandas:
+        topics_processed = convert_to_pandas(topics_processed)
 
     return topics_processed

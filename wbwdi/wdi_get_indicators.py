@@ -1,9 +1,12 @@
 import polars as pl
 
 from .perform_request import perform_request
+from .utils import convert_to_pandas
 
 
-def wdi_get_indicators(language="en", per_page=32500) -> pl.DataFrame:
+def wdi_get_indicators(
+    language="en", per_page=32500, to_pandas: bool = False
+) -> pl.DataFrame:
     """
     Download all available World Bank indicators.
 
@@ -15,9 +18,11 @@ def wdi_get_indicators(language="en", per_page=32500) -> pl.DataFrame:
     Parameters:
     -----------
     language (str): A string specifying the language code for the API
-                    response (default is "en" for English).
-    per_page (int): An integer specifying the number of results per page for the API.
-                    Defaults to 32,500. Must be a value between 1 and 32,500.
+        response (default is "en" for English).
+    per_page (int): An integer specifying the number of results per page for the
+        API. Defaults to 32,500. Must be a value between 1 and 32,500.
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
+        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -----------
@@ -91,5 +96,8 @@ def wdi_get_indicators(language="en", per_page=32500) -> pl.DataFrame:
     indicators_processed = indicators_processed.drop("topics").join(
         topics, on="indicator_id", how="left"
     )
+
+    if to_pandas:
+        indicators_processed = convert_to_pandas(indicators_processed)
 
     return indicators_processed

@@ -1,15 +1,20 @@
 import polars as pl
 
 from .perform_request import perform_request
+from .utils import convert_to_pandas
 
 
-def wdi_get_languages() -> pl.DataFrame:
+def wdi_get_languages(to_pandas: bool = False) -> pl.DataFrame:
     """
     Download languages from the World Bank API.
 
     This function returns a DataFrame of supported languages for querying the
     World Bank API. The supported languages include English, Spanish, French,
     Arabic, Chinese, and others.
+
+    Parameters:
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
+        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
      pl.DataFrame
@@ -49,5 +54,8 @@ def wdi_get_languages() -> pl.DataFrame:
             native_form=pl.col("native_form").str.strip_chars_end(),
         )
     )
+
+    if to_pandas:
+        languages_processed = convert_to_pandas(languages_processed)
 
     return languages_processed

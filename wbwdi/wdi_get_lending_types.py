@@ -1,9 +1,10 @@
 import polars as pl
 
 from .perform_request import perform_request
+from .utils import convert_to_pandas
 
 
-def wdi_get_lending_types(language="en") -> pl.DataFrame:
+def wdi_get_lending_types(language="en", to_pandas: bool = False) -> pl.DataFrame:
     """
     Download lending types from the World Bank API.
 
@@ -13,7 +14,9 @@ def wdi_get_lending_types(language="en") -> pl.DataFrame:
 
     Parameters:
     language (str): A character string specifying the language code for the API
-                    response (default is "en" for English).
+        response (default is "en" for English).
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
+        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -------
@@ -46,5 +49,8 @@ def wdi_get_lending_types(language="en") -> pl.DataFrame:
             "value": "lending_type_name",
         }
     )
+
+    if to_pandas:
+        lending_types_processed = convert_to_pandas(lending_types_processed)
 
     return lending_types_processed

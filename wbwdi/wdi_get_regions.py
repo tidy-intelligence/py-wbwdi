@@ -1,9 +1,10 @@
 import polars as pl
 
 from .perform_request import perform_request
+from .utils import convert_to_pandas
 
 
-def wdi_get_regions(language: str = "en") -> pl.DataFrame:
+def wdi_get_regions(language: str = "en", to_pandas: bool = False) -> pl.DataFrame:
     """
     Download regions from the World Bank API.
 
@@ -14,7 +15,9 @@ def wdi_get_regions(language: str = "en") -> pl.DataFrame:
     Parameters:
     ----------
     language (str): A string specifying the language code for the API response
-                    (default is "en" for English).
+        (default is "en" for English).
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
+        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -------
@@ -61,5 +64,8 @@ def wdi_get_regions(language: str = "en") -> pl.DataFrame:
             region_name=pl.col("region_name").str.strip_chars(),
         )
     )
+
+    if to_pandas:
+        regions_processed = convert_to_pandas(regions_processed)
 
     return regions_processed

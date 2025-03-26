@@ -3,6 +3,8 @@ import polars as pl
 from wbwdi.perform_request import perform_request
 from wbwdi.wdi_get_sources import wdi_get_sources
 
+from .utils import convert_to_pandas
+
 
 def wdi_get(
     entities,
@@ -16,6 +18,7 @@ def wdi_get(
     progress=True,
     source=None,
     format="long",
+    to_pandas: bool = False,
 ):
     """
     Download World Bank indicator data for specific entities and time periods.
@@ -38,6 +41,7 @@ def wdi_get(
     progress (bool): Whether to show progress messages during data download and parsing. Defaults to True.
     source (int, optional): The data source, see wdi_get_sources.
     format (str): Specifies whether the data is returned in "long" or "wide" format. Defaults to "long".
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame. Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -----------
@@ -133,6 +137,9 @@ def wdi_get(
         indicators_processed = indicators_processed.pivot(
             index=["entity_id", "year"], on="indicator_id", values="value"
         )
+
+    if to_pandas:
+        indicators_processed = convert_to_pandas(indicators_processed)
 
     return indicators_processed
 

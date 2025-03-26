@@ -1,9 +1,12 @@
 import polars as pl
 
 from .perform_request import perform_request
+from .utils import convert_to_pandas
 
 
-def wdi_get_entities(language="en", per_page=1000) -> pl.DataFrame:
+def wdi_get_entities(
+    language="en", per_page=1000, to_pandas: bool = False
+) -> pl.DataFrame:
     """
     Download all countries and regions from the World Bank API.
 
@@ -19,6 +22,8 @@ def wdi_get_entities(language="en", per_page=1000) -> pl.DataFrame:
                     (Spanish), "fr" (French), and others depending on the API.
     per_page (int): An integer specifying the number of records to fetch per request.
                     Defaults to 1000.
+    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
+        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -----------
@@ -153,5 +158,8 @@ def wdi_get_entities(language="en", per_page=1000) -> pl.DataFrame:
             pl.col("latitude"),
         )
     )
+
+    if to_pandas:
+        entities_processed = convert_to_pandas(entities_processed)
 
     return entities_processed
