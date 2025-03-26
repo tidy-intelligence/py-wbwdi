@@ -1,5 +1,9 @@
 # Changelog
 
+## Development version
+
+- Added `to_pandas` paramter to `wdi_get*` functions functions.
+
 ## v1.0.0 (2025-02-25)
 
 - Enhanced the `wdi_get()` function to support monthly and quarterly frequencies for specific indicators, allowing for more granular data analysis.

@@ -14,13 +14,21 @@ This library is a product of Christoph Scheuch and not sponsored by or affiliate
 
 You can install the release version from [PyPI](https://pypi.org/project/wbwdi/): 
 
-```python
+```
 pip install wbwdi
 ```
 
+If you want to use the package with `pandas`, then install with the corresponding dependencies:
+
+```
+pip install wbwdi[pandas]
+```
+
+You also need to set the configuration to `pandas` (see below).
+
 You can install the development version from GitHub:
 
-```python
+```
 pip install "git+https://github.com/tidy-intelligence/py-wbwdi"
 ```
 
@@ -29,60 +37,59 @@ pip install "git+https://github.com/tidy-intelligence/py-wbwdi"
 The main function `wdi_get()` provides an interface to download multiple WDI series for multiple entities and specific date ranges.
 
 ```python
-from wbwdi import wdi_get
+import wbwdi as wb
 
-wdi_get(
-  entities = ["MEX", "CAN", "USA"], 
-  indicators = ["NY.GDP.PCAP.KD", "SP.POP.TOTL"],
-  start_year = 2020, end_year = 2024
+wb.wdi_get(
+  entities=["MEX", "CAN", "USA"], 
+  indicators=["NY.GDP.PCAP.KD", "SP.POP.TOTL"],
+  start_year=2020, 
+  end_year=2024
 )
 ```
 
 You can also download these indicators for all entities and available dates:
 
 ```python
-wdi_get(
-  entities = "all", 
-  indicators = ["NY.GDP.PCAP.KD", "SP.POP.TOTL"]
+wb.wdi_get(
+  entities="all", 
+  indicators=["NY.GDP.PCAP.KD", "SP.POP.TOTL"]
 )
 ```
 
 Some indicators are also available on a monthly basis, e.g.:
 
 ```python
-wdi_get(
-  entities = "AUT", 
-  indicators = "DPANUSSPB",         
-  start_year = 2012, end_year = 2015, 
-  frequency = "month"
+wb.wdi_get(
+  entities="AUT", 
+  indicators="DPANUSSPB",         
+  start_year=2012, 
+  end_year=2015, 
+  frequency="month"
 )
 ```
 
 Similarly, there are also some indicators available on a quarterly frequency, e.g.:
 
 ```python
-wdi_get(
-  entities = "NGA", 
-  indicators =  "DT.DOD.DECT.CD.TL.US",
-  start_year = 2012, end_year = 2015, 
-  frequency = "quarter"
+wb.wdi_get(
+  entities="NGA", 
+  indicators= "DT.DOD.DECT.CD.TL.US",
+  start_year=2012, 
+  end_year=2015, 
+  frequency="quarter"
 )
 ```
 
 You can get a list of all indicators supported by the WDI API via:
 
 ```python
-from wbwdi import wdi_get_indicators
-
-wdi_get_indicators()
+wb.wdi_get_indicators()
 ```
 
 You can get a list of all supported entities via:
 
 ```python
-from wbwdi import wdi_get_entities
-
-wdi_get_entities()
+wb.wdi_get_entities()
 ```
 
 You can also get the list of supported indicators and entities in
@@ -90,41 +97,48 @@ another language, but note that not everything seems to be translated
 into other languages:
 
 ```python
-wdi_get_indicators(language = "es")
-wdi_get_entities(language = "zh")
+wb.wdi_get_indicators(language="es")
+wb.wdi_get_entities(language="zh")
 ```
 
 Check out the following function for a list of supported languages:
 
 ```python
-from wbwdi import wdi_get_languages
-
-wdi_get_languages()
+wb.wdi_get_languages()
 ```
 
 In addition, you can list supported regions, sources, topics and lending
 types, respectively:
 
 ```python
-from wbwdi import wdi_get_regions, wdi_get_sources, wdi_get_topics, wdi_get_lending_types
-
-wdi_get_regions()
-wdi_get_sources()
-wdi_get_topics()
-wdi_get_lending_types()
+wb.wdi_get_regions()
+wb.wdi_get_sources()
+wb.wdi_get_topics()
+wb.wdi_get_lending_types()
 ```
 
 If you want to search for specific keywords among indicators or other data sources, you can use the Positron data explorer. Alternatively, this package comes with a helper function:
 
 ```python
-from wbwdi import wdi_get_indicators, wdi_search
+indicators=wb.wdi_get_indicators()
 
-indicators = wdi_get_indicators()
-
-wdi_search(
+wb.wdi_search(
   indicators,
-  keywords = ["inequality", "gender"],
-  columns = ["indicator_name"]
+  keywords=["inequality", "gender"],
+  columns=["indicator_name"]
+)
+```
+
+If you want to data as a `pandas` or `arrow` data frame instead of `polars`, you can change the corresponding configuration:
+
+```python
+wb.wdi_set_format("pandas")  
+
+wb.wdi_get(
+  entities=["MEX", "CAN", "USA"], 
+  indicators=["NY.GDP.PCAP.KD", "SP.POP.TOTL"],
+  start_year=2020, 
+  end_year=2024
 )
 ```
 

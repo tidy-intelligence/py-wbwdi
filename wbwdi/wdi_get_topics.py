@@ -1,5 +1,8 @@
 import polars as pl
+
+from .config import format_output
 from .perform_request import perform_request
+
 
 def wdi_get_topics(language: str = "en") -> pl.DataFrame:
     """
@@ -7,12 +10,12 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
     Bank API. Topics represent the broad subject areas covered by the World
     Bank's datasets.
 
-    Parameters:
+    Parameters
     ----------
-    language (str): A string specifying the language code for the API response 
-                    (default is "en" for English).
-    
-    Returns:
+    language (str): A string specifying the language code for the API response
+        (default is "en" for English).
+
+    Returns
     -------
     pl.DataFrame
         A DataFrame with the following columns:
@@ -20,29 +23,31 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
         - `topic_name`: The name of the topic (e.g., "Education", "Health").
         - `topic_note`: A brief description or note about the topic.
 
-    Details:
-    This function provides a reference for the supported topics that can be used 
-    to refine your queries when accessing the World Bank API. Topics represent 
+    Details
+    -------
+    This function provides a reference for the supported topics that can be used
+    to refine your queries when accessing the World Bank API. Topics represent
     different areas of focus for data analysis.
 
-    Source:
+    Source
+    ------
     https://api.worldbank.org/v2/topics
 
-    Examples:
+    Examples
+    --------
     Download all available topics in English
     >>> wdi_get_topics()
     """
     topics_raw = perform_request("topics", language=language)
 
-    topics_processed = (pl.DataFrame(topics_raw)
-        .rename(
-            {"id": "topic_id", "value": "topic_name", "sourceNote": "topic_note"}
-        )
+    topics_processed = (
+        pl.DataFrame(topics_raw)
+        .rename({"id": "topic_id", "value": "topic_name", "sourceNote": "topic_note"})
         .with_columns(
-            topic_id = pl.col("topic_id").cast(pl.Int64),
-            topic_name = pl.col("topic_name").str.strip_chars(),
-            topic_note = pl.col("topic_note").str.strip_chars()
+            topic_id=pl.col("topic_id").cast(pl.Int64),
+            topic_name=pl.col("topic_name").str.strip_chars(),
+            topic_note=pl.col("topic_note").str.strip_chars(),
         )
     )
 
-    return topics_processed
+    return format_output(topics_processed)
