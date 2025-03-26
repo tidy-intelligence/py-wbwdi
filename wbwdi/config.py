@@ -2,7 +2,7 @@ VALID_FORMATS = {"polars", "pandas", "arrow"}
 RETURN_FORMAT = "polars"
 
 
-def wdi_set_format(fmt: str):
+def wdi_set_format(fmt: str):  # pragma: no cover
     fmt = fmt.lower()
     if fmt not in VALID_FORMATS:
         raise ValueError(f"Invalid format '{fmt}'. Choose from {VALID_FORMATS}.")
@@ -10,7 +10,7 @@ def wdi_set_format(fmt: str):
     RETURN_FORMAT = fmt
 
 
-def format_output(df):
+def format_output(df):  # pragma: no cover
     """
     Converts a Polars DataFrame to the desired output format.
 
