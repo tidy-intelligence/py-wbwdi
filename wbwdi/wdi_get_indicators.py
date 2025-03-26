@@ -1,12 +1,10 @@
 import polars as pl
 
+from .config import format_output
 from .perform_request import perform_request
-from .utils import convert_to_pandas
 
 
-def wdi_get_indicators(
-    language="en", per_page=32500, to_pandas: bool = False
-) -> pl.DataFrame:
+def wdi_get_indicators(language="en", per_page=32500) -> pl.DataFrame:
     """
     Download all available World Bank indicators.
 
@@ -15,17 +13,15 @@ def wdi_get_indicators(
     name, unit, source, and associated topics. The user can specify the language
     of the API response and whether to include additional details.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     language (str): A string specifying the language code for the API
         response (default is "en" for English).
     per_page (int): An integer specifying the number of results per page for the
         API. Defaults to 32,500. Must be a value between 1 and 32,500.
-    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
-        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
-    Returns:
-    -----------
+    Returns
+    -------
         pl.DataFrame
         A DataFrame with the following columns:
         - `indicator_id`: A character string for the ID of the indicator (e.g., "NY.GDP.PCAP.KD").
@@ -36,17 +32,17 @@ def wdi_get_indicators(
         - `source_organization`: A character string denoting the organization responsible for the data source.
         - `topics`: A nested list containing (possibly multiple) topics associated with the indicator, with two columns: an integer `topic_id` and a character `topic_name`.
 
-    Details:
-    -----------
+    Details
+    -------
     This function makes a request to the World Bank API to retrieve metadata for
     all available indicators. It processes the response into a tidy DataFrame format.
 
-    Source:
-    -----------
+    Source
+    ------
     https://api.worldbank.org/v2/indicators
 
-    Examples:
-    -----------
+    Examples
+    --------
     Download all supported indicators in English
     >>> wdi_get_indicators()
 
@@ -97,7 +93,4 @@ def wdi_get_indicators(
         topics, on="indicator_id", how="left"
     )
 
-    if to_pandas:
-        indicators_processed = convert_to_pandas(indicators_processed)
-
-    return indicators_processed
+    return format_output(indicators_processed)

@@ -1,10 +1,10 @@
 import polars as pl
 
+from .config import format_output
 from .perform_request import perform_request
-from .utils import convert_to_pandas
 
 
-def wdi_get_lending_types(language="en", to_pandas: bool = False) -> pl.DataFrame:
+def wdi_get_lending_types(language="en") -> pl.DataFrame:
     """
     Download lending types from the World Bank API.
 
@@ -12,13 +12,12 @@ def wdi_get_lending_types(language="en", to_pandas: bool = False) -> pl.DataFram
     World Bank API. The lending types classify countries based on the financial
     terms available to them from the World Bank.
 
-    Parameters:
+    Parameters
+    ----------
     language (str): A character string specifying the language code for the API
         response (default is "en" for English).
-    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
-        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
-    Returns:
+    Returns
     -------
     pl.DataFrame
         A DataFrame with the following columns:
@@ -26,13 +25,15 @@ def wdi_get_lending_types(language="en", to_pandas: bool = False) -> pl.DataFram
         - `lending_type_iso2code`: A character string for the ISO2 code of the lending type.
         - `lending_type_name`: A description of the lending type (e.g., "IBRD", "IDA").
 
-    Details:
+    Details
+    -------
     This function provides a reference for the supported lending types, which
     classify countries according to the financial terms they are eligible for
     under World Bank programs. The language parameter allows the results to be
     returned in different languages as supported by the API.
 
-    Source:
+    Source
+    ------
     https://api.worldbank.org/v2/lendingTypes
 
     Examples:
@@ -50,7 +51,4 @@ def wdi_get_lending_types(language="en", to_pandas: bool = False) -> pl.DataFram
         }
     )
 
-    if to_pandas:
-        lending_types_processed = convert_to_pandas(lending_types_processed)
-
-    return lending_types_processed
+    return format_output(lending_types_processed)

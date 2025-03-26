@@ -1,10 +1,10 @@
 import polars as pl
 
+from .config import format_output
 from .perform_request import perform_request
-from .utils import convert_to_pandas
 
 
-def wdi_get_sources(language: str = "en", to_pandas: bool = False) -> pl.DataFrame:
+def wdi_get_sources(language: str = "en") -> pl.DataFrame:
     """
     Download data sources from the World Bank API.
 
@@ -12,14 +12,12 @@ def wdi_get_sources(language: str = "en", to_pandas: bool = False) -> pl.DataFra
     World Bank API. The data sources include various databases and datasets
     provided by the World Bank.
 
-    Parameters:
+    Parameters
     ----------
     language (str): A string specifying the language code for the API response
                     (default is "en" for English).
-    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
-        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
-    Returns:
+    Returns
     -------
     pl.DataFrame
         A DataFrame with the following columns:
@@ -31,17 +29,17 @@ def wdi_get_sources(language: str = "en", to_pandas: bool = False) -> pl.DataFra
         - `is_metadata_available`: A boolean indicating whether metadata is available.
         - `concepts`: The number of concepts defined for the data source.
 
-    Details:
+    Details
     -------
     This function provides a reference for the supported data sources and their metadata when querying
     the World Bank API. The columns `is_data_available` and `is_metadata_available` are boolean values
     derived from the API response, where "Y" indicates availability.
 
-    Source:
-    -------
+    Source
+    ------
     https://api.worldbank.org/v2/sources
 
-    Examples:
+    Examples
     --------
     Download all available data sources in English
     >>> wdi_get_sources()
@@ -80,7 +78,4 @@ def wdi_get_sources(language: str = "en", to_pandas: bool = False) -> pl.DataFra
         )
     )
 
-    if to_pandas:
-        sources_processed = convert_to_pandas(sources_processed)
-
-    return sources_processed
+    return format_output(sources_processed)

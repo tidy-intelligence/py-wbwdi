@@ -1,3 +1,4 @@
+from .config import wdi_set_format
 from .wdi_get import wdi_get
 from .wdi_get_entities import wdi_get_entities
 from .wdi_get_income_levels import wdi_get_income_levels
@@ -20,4 +21,5 @@ __all__ = [
     "wdi_get_sources",
     "wdi_get_topics",
     "wdi_search",
+    "wdi_set_format",
 ]

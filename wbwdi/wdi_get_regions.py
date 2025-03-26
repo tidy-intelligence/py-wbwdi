@@ -1,10 +1,10 @@
 import polars as pl
 
+from .config import format_output
 from .perform_request import perform_request
-from .utils import convert_to_pandas
 
 
-def wdi_get_regions(language: str = "en", to_pandas: bool = False) -> pl.DataFrame:
+def wdi_get_regions(language: str = "en") -> pl.DataFrame:
     """
     Download regions from the World Bank API.
 
@@ -12,14 +12,12 @@ def wdi_get_regions(language: str = "en", to_pandas: bool = False) -> pl.DataFra
     Bank API. The regions include various geographic areas covered by the World
     Bank's datasets.
 
-    Parameters:
+    Parameters
     ----------
     language (str): A string specifying the language code for the API response
         (default is "en" for English).
-    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
-        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
-    Returns:
+    Returns
     -------
     pl.DataFrame
         A DataFrame with the following columns:
@@ -28,17 +26,17 @@ def wdi_get_regions(language: str = "en", to_pandas: bool = False) -> pl.DataFra
         - `region_iso2code`: A character string representing the ISO2 code for the region.
         - `region_name`: A character string representing the name of the region, in the specified language.
 
-    Details:
+    Details
     -------
     This function provides a reference for the supported regions, which are important
     for refining queries related to geographic data in the World Bank's datasets.
     The `region_id` column is unique for seven key regions.
 
-    Source:
-    -------
+    Source
+    ------
     https://api.worldbank.org/v2/region
 
-    Examples:
+    Examples
     --------
     Download all regions in English
     >>> wdi_get_regions()
@@ -65,7 +63,4 @@ def wdi_get_regions(language: str = "en", to_pandas: bool = False) -> pl.DataFra
         )
     )
 
-    if to_pandas:
-        regions_processed = convert_to_pandas(regions_processed)
-
-    return regions_processed
+    return format_output(regions_processed)

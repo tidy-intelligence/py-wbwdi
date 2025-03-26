@@ -1,12 +1,10 @@
 import polars as pl
 
+from .config import format_output
 from .perform_request import perform_request
-from .utils import convert_to_pandas
 
 
-def wdi_get_entities(
-    language="en", per_page=1000, to_pandas: bool = False
-) -> pl.DataFrame:
+def wdi_get_entities(language="en", per_page=1000) -> pl.DataFrame:
     """
     Download all countries and regions from the World Bank API.
 
@@ -15,18 +13,16 @@ def wdi_get_entities(
     as the entity's ID, ISO2 code, name, region information, lending type,
     capital city, and coordinates.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     language (str): A character string specifying the language for the API response.
                     Defaults to "en" (English). Other supported options include "es"
                     (Spanish), "fr" (French), and others depending on the API.
     per_page (int): An integer specifying the number of records to fetch per request.
                     Defaults to 1000.
-    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame.
-        Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
-    Returns:
-    -----------
+    Returns
+    -------
     pl.DataFrame
         A DataFrame with the following columns:
         - `entity_id`: A character string representing the entity's unique identifier.
@@ -49,20 +45,20 @@ def wdi_get_entities(
         - `longitude`: A numeric value for the longitude of the entity.
         - `latitude`: A numeric value for the latitude of the entity.
 
-    Details:
-    -----------
+    Details
+    -------
     This function sends a request to the World Bank API to retrieve data for all
     supported entities in the specified language. The data is then processed into
     a tidy format and includes information about the country, such as its ISO code,
     capital city, geographical coordinates, and additional metadata about regions,
     income levels, and lending types.
 
-    Source:
-    -----------
+    Source
+    ------
     https://api.worldbank.org/v2/entities
 
-    Examples:
-    -----------
+    Examples
+    --------
     Download all entities in English
     >>> wdi_get_entities()
 
@@ -159,7 +155,4 @@ def wdi_get_entities(
         )
     )
 
-    if to_pandas:
-        entities_processed = convert_to_pandas(entities_processed)
-
-    return entities_processed
+    return format_output(entities_processed)

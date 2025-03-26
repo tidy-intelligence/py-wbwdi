@@ -3,7 +3,7 @@ import polars as pl
 from wbwdi.perform_request import perform_request
 from wbwdi.wdi_get_sources import wdi_get_sources
 
-from .utils import convert_to_pandas
+from .config import format_output
 
 
 def wdi_get(
@@ -18,7 +18,6 @@ def wdi_get(
     progress=True,
     source=None,
     format="long",
-    to_pandas: bool = False,
 ):
     """
     Download World Bank indicator data for specific entities and time periods.
@@ -41,7 +40,6 @@ def wdi_get(
     progress (bool): Whether to show progress messages during data download and parsing. Defaults to True.
     source (int, optional): The data source, see wdi_get_sources.
     format (str): Specifies whether the data is returned in "long" or "wide" format. Defaults to "long".
-    to_pandas (bool): A boolean indicating whether to return a pandas DataFrame. Requires the `pandas` and `pyarrow` packages. Defaults to `False`.
 
     Returns:
     -----------
@@ -55,6 +53,7 @@ def wdi_get(
         - `value`: The value of the indicator for the given country and date.
 
     Details:
+    -----------
     This function constructs a request URL for the World Bank API, retrieves the relevant
     data for the given entities and indicators, and processes the response into a tidy
     format. The user can optionally specify a date range, and the function will handle
@@ -65,6 +64,7 @@ def wdi_get(
     for each indicator and then combining the results into a single tidy DataFrame.
 
     Examples:
+    -----------
     # Download single indicator for multiple entities
     >>> wdi_get(["USA", "CAN", "GBR"], "NY.GDP.PCAP.KD")
 
@@ -138,10 +138,7 @@ def wdi_get(
             index=["entity_id", "year"], on="indicator_id", values="value"
         )
 
-    if to_pandas:
-        indicators_processed = convert_to_pandas(indicators_processed)
-
-    return indicators_processed
+    return format_output(indicators_processed)
 
 
 def validate_most_recent_only(most_recent_only):

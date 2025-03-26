@@ -14,19 +14,21 @@ This library is a product of Christoph Scheuch and not sponsored by or affiliate
 
 You can install the release version from [PyPI](https://pypi.org/project/wbwdi/): 
 
-```python
+```
 pip install wbwdi
 ```
 
-If you want to use the package with `pandas`, then install via:
+If you want to use the package with `pandas`, then install with the corresponding dependencies:
 
-```python
+```
 pip install wbwdi[pandas]
 ```
 
+You also need to set the configuration to `pandas` (see below).
+
 You can install the development version from GitHub:
 
-```python
+```
 pip install "git+https://github.com/tidy-intelligence/py-wbwdi"
 ```
 
@@ -127,15 +129,16 @@ wb.wdi_search(
 )
 ```
 
-If you want to get a `pandas` data frame instead of `polars`, you can use the `to_pandas` option (note that `pandas` and `pyarrow` must be installed):
+If you want to data as a `pandas` or `arrow` data frame instead of `polars`, you can change the corresponding configuration:
 
 ```python
+wb.wdi_set_format("pandas")  
+
 wb.wdi_get(
   entities=["MEX", "CAN", "USA"], 
   indicators=["NY.GDP.PCAP.KD", "SP.POP.TOTL"],
   start_year=2020, 
-  end_year=2024,
-  to_pandas=True
+  end_year=2024
 )
 ```
 
