@@ -1,5 +1,7 @@
 import polars as pl
+
 from .perform_request import perform_request
+
 
 def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
     """
@@ -11,7 +13,7 @@ def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
 
     Parameters:
     -----------
-    language (str): A string specifying the language code for the API response 
+    language (str): A string specifying the language code for the API response
                     (default is "en" for English).
 
     Returns:
@@ -32,7 +34,7 @@ def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
     Source:
     -------
     https://api.worldbank.org/v2/incomeLevels
-    
+
     Examples:
     -------
     Download all income levels in English
@@ -40,12 +42,12 @@ def wdi_get_income_levels(language: str = "en") -> pl.DataFrame:
     """
     income_levels_raw = perform_request("incomeLevels", language=language)
 
-    income_levels_processed = (pl.DataFrame(income_levels_raw)
-        .rename({
+    income_levels_processed = pl.DataFrame(income_levels_raw).rename(
+        {
             "id": "income_level_id",
             "iso2code": "income_level_iso2code",
-            "value": "income_level_name"
-        })
+            "value": "income_level_name",
+        }
     )
 
     return income_levels_processed

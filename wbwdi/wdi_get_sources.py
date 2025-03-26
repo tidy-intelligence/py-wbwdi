@@ -1,5 +1,7 @@
 import polars as pl
+
 from .perform_request import perform_request
+
 
 def wdi_get_sources(language: str = "en") -> pl.DataFrame:
     """
@@ -11,7 +13,7 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
 
     Parameters:
     ----------
-    language (str): A string specifying the language code for the API response 
+    language (str): A string specifying the language code for the API response
                     (default is "en" for English).
 
     Returns:
@@ -43,28 +45,35 @@ def wdi_get_sources(language: str = "en") -> pl.DataFrame:
     """
     sources_raw = perform_request("sources", language=language)
 
-    sources_processed = (pl.DataFrame(sources_raw)
-        .rename({
-            "id": "source_id",
-            "code": "source_code",
-            "name": "source_name",
-            "lastupdated": "update_date",
-            "dataavailability": "is_data_available",
-            "metadataavailability": "is_metadata_available",
-            "concepts": "concepts"
-        })
+    sources_processed = (
+        pl.DataFrame(sources_raw)
+        .rename(
+            {
+                "id": "source_id",
+                "code": "source_code",
+                "name": "source_name",
+                "lastupdated": "update_date",
+                "dataavailability": "is_data_available",
+                "metadataavailability": "is_metadata_available",
+                "concepts": "concepts",
+            }
+        )
         .with_columns(
-            source_id = pl.col("source_id").cast(pl.Int64),
-            source_name = pl.col("source_name").str.strip_chars(),
-            update_date = pl.col("update_date").str.to_date(),
-            is_data_available = pl.col("is_data_available") == "Y",
-            is_metadata_available = pl.col("is_metadata_available") == "Y",
-            concepts = pl.col("concepts").cast(pl.Int64)
+            source_id=pl.col("source_id").cast(pl.Int64),
+            source_name=pl.col("source_name").str.strip_chars(),
+            update_date=pl.col("update_date").str.to_date(),
+            is_data_available=pl.col("is_data_available") == "Y",
+            is_metadata_available=pl.col("is_metadata_available") == "Y",
+            concepts=pl.col("concepts").cast(pl.Int64),
         )
         .select(
-            pl.col("source_id"), pl.col("source_code"), pl.col("source_name"),
-            pl.col("update_date"), pl.col("is_data_available"), pl.col("is_metadata_available"),
-            pl.col("concepts")
+            pl.col("source_id"),
+            pl.col("source_code"),
+            pl.col("source_name"),
+            pl.col("update_date"),
+            pl.col("is_data_available"),
+            pl.col("is_metadata_available"),
+            pl.col("concepts"),
         )
     )
 

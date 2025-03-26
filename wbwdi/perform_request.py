@@ -1,6 +1,8 @@
-import httpx
-from typing import List, Optional, Union
 import sys
+from typing import List, Optional, Union
+
+import httpx
+
 
 def perform_request(
     resource: str,
@@ -10,16 +12,16 @@ def perform_request(
     most_recent_only: bool = False,
     source: Optional[str] = None,
     progress: bool = False,
-    base_url: str = "https://api.worldbank.org/v2/"
+    base_url: str = "https://api.worldbank.org/v2/",
 ) -> Union[List[dict], None]:
     """
     Perform a request to the World Bank API with optional parameters for pagination,
     language, date range, data source, and progress tracking.
-    
-    This function constructs a request URL for the specified World Bank API resource and 
-    retrieves data as a JSON list. It supports paginated requests and optional progress 
+
+    This function constructs a request URL for the specified World Bank API resource and
+    retrieves data as a JSON list. It supports paginated requests and optional progress
     tracking to provide feedback for multi-page responses.
-    
+
     Parameters:
     ----------
     resource : str
@@ -40,7 +42,7 @@ def perform_request(
     Returns:
     -------
     Union[List[dict], None]
-        A list of JSON objects containing the API response data. If paginated, consolidates 
+        A list of JSON objects containing the API response data. If paginated, consolidates
         all pages into a single list. Returns None if an error occurs.
 
     Notes:
@@ -54,12 +56,16 @@ def perform_request(
     ValueError
         If `per_page` is not an integer between 1 and 32,500.
     """
-    
+
     validate_per_page(per_page)
 
-    url = create_request_url(base_url, resource, language, per_page, date, most_recent_only, source)
+    url = create_request_url(
+        base_url, resource, language, per_page, date, most_recent_only, source
+    )
 
-    headers={"User-Agent": "wbwdi Python library (https://github.com/tidy-intelligence/py-wbwdi)"}
+    headers = {
+        "User-Agent": "wbwdi Python library (https://github.com/tidy-intelligence/py-wbwdi)"
+    }
 
     with httpx.Client() as client:
         response = client.get(url, headers=headers)
@@ -68,7 +74,7 @@ def perform_request(
 
         body = response.json()
         pages = int(body[0]["pages"])
-        
+
         if pages == 1:
             return body[1]
         else:
@@ -81,13 +87,20 @@ def perform_request(
                 results.extend(page_response.json()[1])
             return results
 
+
 def validate_per_page(per_page: int):
     if not isinstance(per_page, int) or not (1 <= per_page <= 32500):
         raise ValueError("`per_page` must be an integer between 1 and 32,500.")
 
+
 def create_request_url(
-    base_url: str, resource: str, language: Optional[str],
-    per_page: int, date: Optional[str], most_recent_only: Optional[bool], source: Optional[str]
+    base_url: str,
+    resource: str,
+    language: Optional[str],
+    per_page: int,
+    date: Optional[str],
+    most_recent_only: Optional[bool],
+    source: Optional[str],
 ) -> str:
     if language:
         url = f"{base_url}{language}/{resource}?format=json&per_page={str(per_page)}"
@@ -101,6 +114,7 @@ def create_request_url(
         url += f"&source={str(source)}"
     return url
 
+
 def is_request_error(response: httpx.Response) -> bool:
     if response.status_code >= 400:
         return True
@@ -108,6 +122,7 @@ def is_request_error(response: httpx.Response) -> bool:
     if len(body) == 1 and "message" in body[0]:
         return True
     return False
+
 
 def check_for_body_error(response: httpx.Response) -> List[str]:
     if "application/json" in response.headers.get("Content-Type", ""):
@@ -121,10 +136,11 @@ def check_for_body_error(response: httpx.Response) -> List[str]:
         return [f"Error code: {message_id}", message_value, docs]
     return []
 
+
 def handle_request_error(response: httpx.Response):
     error_body = check_for_body_error(response)
     raise RuntimeError("\n".join(error_body))
 
+
 def print_progress(current: int, total: int):
-    print(f"Progress: {current}/{total}", end='\r')
-    
+    print(f"Progress: {current}/{total}", end="\r")

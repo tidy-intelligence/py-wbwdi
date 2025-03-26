@@ -1,5 +1,7 @@
-import polars as pl
 from functools import reduce
+
+import polars as pl
+
 
 def wdi_search(data, keywords, columns=None):
     """
@@ -39,18 +41,29 @@ def wdi_search(data, keywords, columns=None):
         raise TypeError("`keywords` must be a list of strings.")
 
     if columns is not None:
-        if not isinstance(columns, list) or not all(isinstance(c, str) for c in columns):
+        if not isinstance(columns, list) or not all(
+            isinstance(c, str) for c in columns
+        ):
             raise TypeError("`columns` must be a list of strings or `None`.")
         for col in columns:
             if isinstance(data[col].dtype, (pl.List, pl.Struct)):
-                raise ValueError(f"Column '{col}' has unsupported type {data[col].dtype}. Struct or list columns are currently not supported.")
+                raise ValueError(
+                    f"Column '{col}' has unsupported type {data[col].dtype}. Struct or list columns are currently not supported."
+                )
         columns_to_search = columns
     else:
         columns_to_search = [
-            col for col in data.columns if not isinstance(data[col].dtype, (pl.List, pl.Struct))
+            col
+            for col in data.columns
+            if not isinstance(data[col].dtype, (pl.List, pl.Struct))
         ]
 
-    conditions = [pl.col(col).cast(pl.Utf8).str.contains_any(keywords, ascii_case_insensitive=True) for col in columns_to_search]
+    conditions = [
+        pl.col(col)
+        .cast(pl.Utf8)
+        .str.contains_any(keywords, ascii_case_insensitive=True)
+        for col in columns_to_search
+    ]
     data_filtered = data.filter(reduce(lambda acc, cond: acc | cond, conditions))
-    
+
     return data_filtered

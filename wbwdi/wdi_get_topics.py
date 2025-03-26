@@ -1,5 +1,7 @@
 import polars as pl
+
 from .perform_request import perform_request
+
 
 def wdi_get_topics(language: str = "en") -> pl.DataFrame:
     """
@@ -9,9 +11,9 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
 
     Parameters:
     ----------
-    language (str): A string specifying the language code for the API response 
+    language (str): A string specifying the language code for the API response
                     (default is "en" for English).
-    
+
     Returns:
     -------
     pl.DataFrame
@@ -21,8 +23,8 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
         - `topic_note`: A brief description or note about the topic.
 
     Details:
-    This function provides a reference for the supported topics that can be used 
-    to refine your queries when accessing the World Bank API. Topics represent 
+    This function provides a reference for the supported topics that can be used
+    to refine your queries when accessing the World Bank API. Topics represent
     different areas of focus for data analysis.
 
     Source:
@@ -34,14 +36,13 @@ def wdi_get_topics(language: str = "en") -> pl.DataFrame:
     """
     topics_raw = perform_request("topics", language=language)
 
-    topics_processed = (pl.DataFrame(topics_raw)
-        .rename(
-            {"id": "topic_id", "value": "topic_name", "sourceNote": "topic_note"}
-        )
+    topics_processed = (
+        pl.DataFrame(topics_raw)
+        .rename({"id": "topic_id", "value": "topic_name", "sourceNote": "topic_note"})
         .with_columns(
-            topic_id = pl.col("topic_id").cast(pl.Int64),
-            topic_name = pl.col("topic_name").str.strip_chars(),
-            topic_note = pl.col("topic_note").str.strip_chars()
+            topic_id=pl.col("topic_id").cast(pl.Int64),
+            topic_name=pl.col("topic_name").str.strip_chars(),
+            topic_note=pl.col("topic_note").str.strip_chars(),
         )
     )
 

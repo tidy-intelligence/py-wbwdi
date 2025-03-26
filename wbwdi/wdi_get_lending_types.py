@@ -1,5 +1,7 @@
 import polars as pl
+
 from .perform_request import perform_request
+
 
 def wdi_get_lending_types(language="en") -> pl.DataFrame:
     """
@@ -10,7 +12,7 @@ def wdi_get_lending_types(language="en") -> pl.DataFrame:
     terms available to them from the World Bank.
 
     Parameters:
-    language (str): A character string specifying the language code for the API 
+    language (str): A character string specifying the language code for the API
                     response (default is "en" for English).
 
     Returns:
@@ -22,9 +24,9 @@ def wdi_get_lending_types(language="en") -> pl.DataFrame:
         - `lending_type_name`: A description of the lending type (e.g., "IBRD", "IDA").
 
     Details:
-    This function provides a reference for the supported lending types, which 
-    classify countries according to the financial terms they are eligible for 
-    under World Bank programs. The language parameter allows the results to be 
+    This function provides a reference for the supported lending types, which
+    classify countries according to the financial terms they are eligible for
+    under World Bank programs. The language parameter allows the results to be
     returned in different languages as supported by the API.
 
     Source:
@@ -37,8 +39,12 @@ def wdi_get_lending_types(language="en") -> pl.DataFrame:
 
     lending_types_raw = perform_request("lendingTypes", language=language)
 
-    lending_types_processed = (pl.DataFrame(lending_types_raw)
-        .rename({"id": "lending_type_id", "iso2code": "lending_type_iso2code", "value": "lending_type_name"})
+    lending_types_processed = pl.DataFrame(lending_types_raw).rename(
+        {
+            "id": "lending_type_id",
+            "iso2code": "lending_type_iso2code",
+            "value": "lending_type_name",
+        }
     )
 
     return lending_types_processed
