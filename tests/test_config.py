@@ -74,7 +74,6 @@ def test_format_output_global_state():
     # Setup - create a simple Polars DataFrame
     df = pl.DataFrame({"a": [1, 2, 3], "b": ["x", "y", "z"]})
 
-    # Test each format to ensure global state is used correctly
     for fmt in VALID_FORMATS:
         wdi_set_format(fmt)
         result = format_output(df)
@@ -85,3 +84,6 @@ def test_format_output_global_state():
             assert isinstance(result, pd.DataFrame)
         elif fmt == "arrow":
             assert isinstance(result, pa.Table)
+
+
+wdi_set_format("polars")
