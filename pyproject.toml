@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "wbwdi"
 authors = [{name = "Christoph Scheuch", email = "christoph@tidy-intelligence.com"}]
-version = "1.0.0.9001"
+version = "1.0.1"
 description = "Seamless Access to World Bank World Development Indicators with Polars"
 readme = "README.md"
 license = "MIT"
