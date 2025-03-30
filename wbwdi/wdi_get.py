@@ -4,6 +4,7 @@ from wbwdi.perform_request import perform_request
 from wbwdi.wdi_get_sources import wdi_get_sources
 
 from .config import format_output
+from .wdi_get_entities import wdi_get_entities
 
 
 def wdi_get(
@@ -137,6 +138,27 @@ def wdi_get(
         indicators_processed = indicators_processed.pivot(
             index=["entity_id", "year"], on="indicator_id", values="value"
         )
+
+    if (
+        indicators_processed.height > 0
+        and len(indicators_processed[0, "entity_id"]) == 2
+    ):
+        entities = wdi_get_entities()
+
+        indicators_processed = (
+            indicators_processed.rename({"entity_id": "entity_iso2code"})
+            .join(
+                entities.select(["entity_id", "entity_iso2code"]),
+                on="entity_iso2code",
+                how="left",
+            )
+            .drop("entity_iso2code")
+        )
+
+    indicators_processed = indicators_processed.select(
+        ["entity_id"]
+        + [col for col in indicators_processed.columns if col != "entity_id"]
+    )
 
     return format_output(indicators_processed)
 
