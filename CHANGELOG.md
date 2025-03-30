@@ -2,7 +2,9 @@
 
 ## Development version
 
-- Added `to_pandas` paramter to `wdi_get*` functions functions.
+- Added `wdi_set_format()` function to enable `pandas` or `arrow` output.
+- Ensure that `entity_id` in `wdi_get()` is always ISO-3 code. 
+
 
 ## v1.0.0 (2025-02-25)
 
